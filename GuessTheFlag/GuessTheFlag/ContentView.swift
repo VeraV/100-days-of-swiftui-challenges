@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  GuessTheFlag
-//
-//  Created by Vera Fileyeva on 20/01/2023.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -20,11 +13,16 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            RadialGradient(stops: [
-                .init(color: Color(red: 0.1, green: 0.2, blue: 0.45), location: 0.3),
-                .init(color: Color(red: 0.76, green: 0.15, blue: 0.26), location: 0.3)
-            ], center: .top, startRadius: 200, endRadius: 700)
-                .ignoresSafeArea()
+            RadialGradient(
+                stops: [
+                    .init(color: Color(red: 0.1, green: 0.2, blue: 0.45), location: 0.3),
+                    .init(color: Color(red: 0.76, green: 0.15, blue: 0.26), location: 0.3)
+                ],
+                center: .top,
+                startRadius: 200,
+                endRadius: 700
+            )
+            .ignoresSafeArea()
                 
             VStack {
                 Spacer()
@@ -32,6 +30,7 @@ struct ContentView: View {
                 Text("Guess the Flag")
                     .font(.largeTitle.bold())
                     .foregroundColor(.white)
+                
                 VStack(spacing: 15) {
                     VStack {
                         Text("Tap the flag of")
