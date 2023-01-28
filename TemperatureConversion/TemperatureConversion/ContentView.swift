@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  TemperatureConversion
-//
-//  Created by Vera Fileyeva on 19/01/2023.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -35,6 +28,7 @@ struct ContentView: View {
     }
     private let units = ["°C", "°F", "K"]
     
+    
     var body: some View {
         NavigationView {
             Form {
@@ -60,8 +54,6 @@ struct ContentView: View {
                 } header: {
                     Text("Result is")
                 }
-                
-                
             }
         }
     }
