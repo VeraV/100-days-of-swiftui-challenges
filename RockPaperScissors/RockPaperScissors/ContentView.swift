@@ -13,33 +13,33 @@ enum Figure: CaseIterable {
     
     var picture: String {
         switch self {
-        case .scissors: return "chevron.up"
-        case .rock: return "circle.fill"
         case .paper: return "rectangle.portrait"
+        case .rock: return "circle.fill"
+        case .scissors: return "chevron.up"
         }
     }
     
     var emoji: String {
         switch self {
         case .paper: return "✋"
-        case .scissors: return "✌️"
         case .rock: return "👊"
+        case .scissors: return "✌️"
         }
     }
     
     var win: Figure {
         switch self {
-        case .rock: return .paper
         case .paper: return .scissors
+        case .rock: return .paper
         case .scissors: return .rock
         }
     }
     
     var lose: Figure {
         switch self {
-        case .scissors: return .paper
         case .paper: return .rock
         case .rock: return .scissors
+        case .scissors: return .paper
         }
     }
 }
@@ -56,70 +56,90 @@ struct ContentView: View {
     
     @State private var alertTitle = ""
     
-    func chooseAgain () {
+    func showNew () {
         computerChoice = Figure.allCases.randomElement()!
         chooseToWin.toggle()
         questionNum += 1
     }
     
+    func chooseAgain () {
+        showingGameOver = questionNum == 10
+        if !showingGameOver {
+            showNew()
+        }
+    }
+    
     func reset () {
         score = 0
         questionNum = 0
+        showNew()
     }
     
     var body: some View {
-        VStack {
-            Spacer()
-            Text(computerChoice.emoji)
-                .font(.largeTitle)
-                .padding(.bottom)
-
-            Text("Choose to \(chooseToWin ? "WIN" : "LOSE")")
-                .fontWeight(.semibold)
-            Spacer()
-            Section {
-                HStack {
-                    ForEach(Figure.allCases, id: \.self) { playerChoice in
-                        Button {
-                            if playerChoice == (chooseToWin ? computerChoice.win : computerChoice.lose) {
-                                score += 1
-                                alertTitle = "Very GOOD!"
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(
+                    colors: [
+                        Color(red: 0.65, green: 0.69, blue: 0.88),
+                        Color(red: 0.70, green: 0.53, blue: 0.62)]),
+                startPoint: .topLeading, endPoint: .bottomTrailing)
+            .ignoresSafeArea()
+            
+            VStack {
+                Spacer()
+                Text(computerChoice.emoji)
+                    .font(.system(size: 120))
+                    .padding(.bottom)
+                
+                Text("Pick one to \(chooseToWin ? "WIN" : "LOSE")")
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .foregroundStyle(.ultraThinMaterial)
+                Spacer()
+                Section {
+                    HStack {
+                        ForEach(Figure.allCases, id: \.self) { playerChoice in
+                            Button {
+                                if playerChoice == (chooseToWin ? computerChoice.win : computerChoice.lose) {
+                                    score += 1
+                                    alertTitle = "Very GOOD!"
+                                    
+                                } else {
+                                    score -= 1
+                                    alertTitle = "WRONG!"
+                                }
+                                showingScore = true
                                 
-                            } else {
-                                score -= 1
-                                alertTitle = "WRONG!"
+                            } label: {
+                                Text(playerChoice.emoji)
+                                    .font(.system(size: 100))
                             }
-                            showingScore = true
-                            showingGameOver = questionNum == 10
-                        } label: {
-                            Text(playerChoice.emoji)
-                                .font(.largeTitle)
+                            .labelStyle(.titleAndIcon)
+                            .shadow(radius: 5)
                         }
-                        .labelStyle(.titleAndIcon)
-                        .shadow(radius: 5)
                     }
+                    .padding(.all)
                 }
-                .padding(.all)
-            } header: {
-                Text("Pick one:")
-                    .foregroundColor(.blue)
+                
+                Spacer()
+                Text("Score: \(score)")
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .foregroundStyle(.ultraThinMaterial)
+                Spacer()
+            }
+            .alert(alertTitle, isPresented: $showingScore) {
+                Button("Continue", action: chooseAgain)
+            } message: {
+                Text("Your score is \(score)")
             }
             
-            Spacer()
-            Text("Score: \(score)")
-            Spacer()
+            .alert("Game Over!", isPresented: $showingGameOver) {
+                Button("Play again!", action: reset)
+            } message: {
+                Text("After 10 times your score is: \(score)")
+            }
         }
-        .alert(alertTitle, isPresented: $showingScore) {
-            Button("Continue", action: chooseAgain)
-        } message: {
-            Text("Your score is \(score)")
-        }
-        .alert("Game Over!", isPresented: $showingGameOver) {
-            Button("Play again!", action: reset)
-        } message: {
-            Text("After 10 times your score is: \(score)")
-        }
-        
     }
 }
 
