@@ -17,7 +17,6 @@ struct ContentView: View {
         .currency(code: Locale.current.currency?.identifier ?? "USD")
     }
 /*2*/private var amountTotal: Double {
-        let checkedPeopleNumber = Double(numberOfPeople + 2)
         let tipChecked = Double(tipPersantage)
         let tipAmount = checkAmount * tipChecked / 100
         return checkAmount + tipAmount
