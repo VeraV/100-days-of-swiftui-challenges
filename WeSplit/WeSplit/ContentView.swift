@@ -9,6 +9,7 @@ struct ContentView: View {
     private var currency: FloatingPointFormatStyle<Double>.Currency {
         .currency(code: Locale.current.currency?.identifier ?? "USD")
     }
+    
     private var amountTotal: Double {
         let tipChecked = Double(tipPercentage)
         let tipAmount = checkAmount * tipChecked / 100
