@@ -1,33 +1,26 @@
-//
-//  ContentView.swift
-//  WeSplit
-//
-//  Created by Vera Fileyeva on 16/01/2023.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     @State private var checkAmount = 0.0
-    @State private var numberOfPeople = 2
-    @State private var tipPersantage = 20
+    @State private var peopleRangeIndex = 2
+    @State private var tipPercentage = 20
     @FocusState private var amountIsFocused: Bool
     
     private var currency: FloatingPointFormatStyle<Double>.Currency {
         .currency(code: Locale.current.currency?.identifier ?? "USD")
     }
-/*2*/private var amountTotal: Double {
-        let tipChecked = Double(tipPersantage)
+    private var amountTotal: Double {
+        let tipChecked = Double(tipPercentage)
         let tipAmount = checkAmount * tipChecked / 100
         return checkAmount + tipAmount
     }
     
     var amountPerPerson: Double {
-        let checkedPeopleNumber = Double(numberOfPeople + 2)
-        let tipChecked = Double(tipPersantage)
+        let checkedPeopleNumber = Double(peopleRangeIndex + 2)
+        let tipChecked = Double(tipPercentage)
         
         let tipAmount = checkAmount * tipChecked / 100
-    /*1*/let amountTotal = checkAmount + tipAmount
+        let amountTotal = checkAmount + tipAmount
         
         let personToPay = amountTotal / checkedPeopleNumber
         return personToPay
@@ -37,12 +30,11 @@ struct ContentView: View {
         NavigationView {
             Form {
                 Section {
-                    TextField("Check Amount", value: $checkAmount, format:
-                                currency)
+                    TextField("Check Amount", value: $checkAmount, format: currency)
                     .keyboardType(.decimalPad)
                     .focused($amountIsFocused)
                     
-                    Picker("Number of People", selection: $numberOfPeople){
+                    Picker("Number of People", selection: $peopleRangeIndex) {
                         ForEach(2..<100) {
                             Text("\($0) people")
                         }
@@ -50,7 +42,7 @@ struct ContentView: View {
                 }
                 
                 Section {
-                    Picker("Tip persantage", selection: $tipPersantage) {
+                    Picker("Tip persantage", selection: $tipPercentage) {
                         ForEach(0..<101, id: \.self) {
                             Text($0, format: .percent)
                         }
@@ -65,7 +57,7 @@ struct ContentView: View {
                 } header: {
                     Text("Total amount with tip")
                 }
-                .foregroundColor(tipPersantage == 0 ? .red : .primary)
+                .foregroundColor(tipPercentage == 0 ? .red : .primary)
                 
                 Section {
                     Text(amountPerPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
