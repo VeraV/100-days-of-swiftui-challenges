@@ -9,11 +9,7 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
     
-    var people = ["vera", "dzianis", "1", "2", "dzianis"]
-    
     var body: some View {
-       
-        
         NavigationView {
             List {
                 Section {
@@ -31,7 +27,7 @@ struct ContentView: View {
                 }
             }
             .navigationTitle(rootWord)
-            .onSubmit(addNewWord)//if colled anywhere on the view
+            .onSubmit(addNewWord)//if called anywhere on the view
             .onAppear(perform: startGame)
             .alert(errorTitle, isPresented: $showingError) {
                 Button("OK", role: .cancel) { }
@@ -57,6 +53,11 @@ struct ContentView: View {
         
         guard isReal(word: answer) else {
             wordError(title: "Word not recognised", message: "You can't just make them up, you know!")
+            return
+        }
+        
+        guard isGoodEnough(word: answer) else {
+            wordError(title: "Word is too simple!", message: "You can do better then this. At least 3 letters and can't be a '\(rootWord)'")
             return
         }
         
@@ -103,6 +104,10 @@ struct ContentView: View {
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
         return misspelledRange.location == NSNotFound
+    }
+    
+    func isGoodEnough(word: String) -> Bool {
+        !(word.count < 3 || (word == rootWord))
     }
     
     func wordError(title: String, message: String) {
