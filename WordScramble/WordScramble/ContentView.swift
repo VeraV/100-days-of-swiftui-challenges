@@ -9,24 +9,34 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
     
+    @State private var score = 0
+    static private var scoreText = "Scores:\n"
+    
     var body: some View {
         NavigationView {
-            List {
-                Section {
-                    TextField("Type your word", text: $newWord)
-                        .autocapitalization(.none)
-                }
-                
-                Section {
-                    ForEach(usedWords, id: \.self) { word in
-                        HStack {
-                            Image(systemName: "\(word.count).circle")
-                            Text(word)
+            VStack {
+                List {
+                    Section {
+                        TextField("Type your word", text: $newWord)
+                            .autocapitalization(.none)
+                    }
+                    
+                    Section {
+                        ForEach(usedWords, id: \.self) { word in
+                            HStack {
+                                Image(systemName: "\(word.count).circle")
+                                Text(word)
+                            }
                         }
                     }
                 }
+                .listStyle(.grouped)
+                
+                Text(ContentView.scoreText)
+                    .foregroundColor(.secondary)
             }
             .navigationTitle(rootWord)
+            .navigationBarTitleDisplayMode(.large)
             .onSubmit(addNewWord)//if called anywhere on the view
             .onAppear(perform: startGame)
             .alert(errorTitle, isPresented: $showingError) {
@@ -35,12 +45,11 @@ struct ContentView: View {
                 Text(errorMessage)
             }
             .toolbar {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button("New Game") { startGame() }
                 }
             }
         }
-        
     }
     
     func addNewWord() {
@@ -74,6 +83,14 @@ struct ContentView: View {
     }
     
     func startGame () {
+        if rootWord != "" {
+            for usedWord in usedWords {
+                score += usedWord.count
+            }
+            ContentView.scoreText += "\(rootWord): \(score)\n"
+            
+            score = 0
+        }
         usedWords = []
         
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
