@@ -40,7 +40,7 @@ struct ContentView: View {
                 }
             }
         }
-        // hello
+        // hello world
     }
     
     func addNewWord() {
