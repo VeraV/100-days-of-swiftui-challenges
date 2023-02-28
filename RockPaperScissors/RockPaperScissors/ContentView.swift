@@ -3,22 +3,6 @@ import SwiftUI
 enum Figure: CaseIterable {
     case rock, paper, scissors
     
-    var name: String {
-        switch self{
-        case .paper: return "paper"
-        case .rock: return "rock"
-        case .scissors: return "scissors"
-        }
-    }
-    
-    var picture: String {
-        switch self {
-        case .paper: return "rectangle.portrait"
-        case .rock: return "circle.fill"
-        case .scissors: return "chevron.up"
-        }
-    }
-    
     var emoji: String {
         switch self {
         case .paper: return "✋"
@@ -27,7 +11,7 @@ enum Figure: CaseIterable {
         }
     }
     
-    var win: Figure {
+    var defeater: Figure {
         switch self {
         case .paper: return .scissors
         case .rock: return .paper
@@ -35,7 +19,7 @@ enum Figure: CaseIterable {
         }
     }
     
-    var lose: Figure {
+    var loser: Figure {
         switch self {
         case .paper: return .rock
         case .rock: return .scissors
@@ -55,21 +39,23 @@ struct ContentView: View {
     @State private var questionNum = 1
     
     @State private var alertTitle = ""
+    private let questionNumberPerGame = 10
     
-    func showNew () {
+    func showNew() {
         computerChoice = Figure.allCases.randomElement()!
         chooseToWin.toggle()
         questionNum += 1
     }
     
-    func chooseAgain () {
-        showingGameOver = questionNum == 10
+    func chooseAgain() {
+        showingGameOver = questionNum == questionNumberPerGame
+        
         if !showingGameOver {
             showNew()
         }
     }
     
-    func reset () {
+    func reset() {
         score = 0
         questionNum = 0
         showNew()
@@ -87,6 +73,7 @@ struct ContentView: View {
             
             VStack {
                 Spacer()
+                
                 Text(computerChoice.emoji)
                     .font(.system(size: 120))
                     .padding(.bottom)
@@ -95,21 +82,21 @@ struct ContentView: View {
                     .font(.title.bold())
                     .foregroundColor(.white)
                     .foregroundStyle(.ultraThinMaterial)
+                
                 Spacer()
+                
                 Section {
                     HStack {
                         ForEach(Figure.allCases, id: \.self) { playerChoice in
                             Button {
-                                if playerChoice == (chooseToWin ? computerChoice.win : computerChoice.lose) {
+                                if playerChoice == (chooseToWin ? computerChoice.defeater : computerChoice.loser) {
                                     score += 1
                                     alertTitle = "Very GOOD!"
-                                    
                                 } else {
                                     score -= 1
                                     alertTitle = "WRONG!"
                                 }
                                 showingScore = true
-                                
                             } label: {
                                 Text(playerChoice.emoji)
                                     .font(.system(size: 100))
@@ -122,10 +109,12 @@ struct ContentView: View {
                 }
                 
                 Spacer()
+                
                 Text("Score: \(score)")
                     .font(.title.bold())
                     .foregroundColor(.white)
                     .foregroundStyle(.ultraThinMaterial)
+                
                 Spacer()
             }
             .alert(alertTitle, isPresented: $showingScore) {
@@ -137,7 +126,7 @@ struct ContentView: View {
             .alert("Game Over!", isPresented: $showingGameOver) {
                 Button("Play again!", action: reset)
             } message: {
-                Text("After 10 times your score is: \(score)")
+                Text("After \(questionNumberPerGame) times your score is: \(score)")
             }
         }
     }
