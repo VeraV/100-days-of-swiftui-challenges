@@ -9,8 +9,7 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
     
-    @State private var score = 0
-    static private var scoreText = "Scores:\n"
+    @State private var scoreText = "Scores:\n"
     
     var body: some View {
         NavigationView {
@@ -19,6 +18,7 @@ struct ContentView: View {
                     Section {
                         TextField("Type your word", text: $newWord)
                             .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                     
                     Section {
@@ -32,7 +32,7 @@ struct ContentView: View {
                 }
                 .listStyle(.grouped)
                 
-                Text(ContentView.scoreText)
+                Text(scoreText)
                     .foregroundColor(.secondary)
             }
             .navigationTitle(rootWord)
@@ -57,22 +57,22 @@ struct ContentView: View {
         guard answer.count > 0 else { return }
         
         guard isOriginal(word: answer) else {
-            wordError(title: "Word used already", message: "Be more original!")
+            showError(title: "Word used already", message: "Be more original!")
             return
         }
         
         guard isPossible(word: answer) else {
-            wordError(title: "Word not possible", message: "You can't spell that word from '\(rootWord)'")
+            showError(title: "Word not possible", message: "You can't spell that word from '\(rootWord)'")
             return
         }
         
         guard isReal(word: answer) else {
-            wordError(title: "Word not recognised", message: "You can't just make them up, you know!")
+            showError(title: "Word not recognised", message: "You can't just make them up, you know!")
             return
         }
         
         guard isGoodEnough(word: answer) else {
-            wordError(title: "Word is too simple!", message: "You can do better then this. At least 3 letters and can't be a '\(rootWord)'")
+            showError(title: "Word is too simple!", message: "You can do better then this. At least 3 letters and can't be a '\(rootWord)'")
             return
         }
         
@@ -83,13 +83,13 @@ struct ContentView: View {
     }
     
     func startGame () {
+        var score = 0
+        
         if rootWord != "" {
             for usedWord in usedWords {
                 score += usedWord.count
             }
-            ContentView.scoreText += "\(rootWord): \(score)\n"
-            
-            score = 0
+            scoreText += "\(rootWord): \(score)\n"
         }
         usedWords = []
         
@@ -101,7 +101,7 @@ struct ContentView: View {
             }
         }
         
-        //if file is not found or file is empty (which is can not happen) then we can trigger crush
+        // If file is not found or file is empty (which should never happen) then we can trigger a crash
         fatalError("Could not load start.txt from bundle.")
     }
     
@@ -119,7 +119,6 @@ struct ContentView: View {
                 return false
             }
         }
-        
         return true
     }
     
@@ -135,7 +134,7 @@ struct ContentView: View {
         !(word.count < 3 || (word == rootWord))
     }
     
-    func wordError(title: String, message: String) {
+    func showError(title: String, message: String) {
         errorTitle = title
         errorMessage = message
         showingError = true
