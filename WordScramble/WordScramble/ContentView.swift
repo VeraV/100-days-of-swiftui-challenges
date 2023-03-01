@@ -83,9 +83,9 @@ struct ContentView: View {
     }
     
     func startGame () {
-        var score = 0
-        
         if rootWord != "" {
+            var score = 0
+            
             for usedWord in usedWords {
                 score += usedWord.count
             }
