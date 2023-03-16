@@ -22,6 +22,11 @@ struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
     
+    @State private var tappedFlagNumber = -1
+    @State private var degreeToTurn = 0.0
+    @State private var opacityNumber = 1.0
+    @State private var flagDropping = 0.0
+    
     var body: some View {
         ZStack {
             RadialGradient(
@@ -55,8 +60,21 @@ struct ContentView: View {
                     ForEach(0..<3) { number in
                         Button {
                             flagTapped(number)
+                
+                            withAnimation {
+                                tappedFlagNumber = number
+                                degreeToTurn += 360
+                                opacityNumber = 0.25
+                                flagDropping = 400
+                            }
                         } label: {
                             FlagImage(name: countries[number])
+                                .rotation3DEffect(
+                                    .degrees(tappedFlagNumber == number ? degreeToTurn : 0),
+                                    axis: (x: 0, y: 1, z: 0)
+                                )
+                                .opacity(tappedFlagNumber != number ? opacityNumber : 1.0)
+                                .offset(y: tappedFlagNumber != number ? flagDropping : 0)
                         }
                     }
                 }
@@ -113,6 +131,14 @@ struct ContentView: View {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
         flagsShowedNumber += 1
+        
+        initFlagRendering ()
+    }
+    
+    func initFlagRendering () {
+        opacityNumber = 1.0
+        flagDropping = 0.0
+        tappedFlagNumber = -1
     }
 }
 
