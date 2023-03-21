@@ -22,6 +22,12 @@ struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
     
+    @State private var tappedFlagNumber = -1
+    
+    private var isInitialState: Bool {
+        tappedFlagNumber == -1
+    }
+    
     var body: some View {
         ZStack {
             RadialGradient(
@@ -55,8 +61,18 @@ struct ContentView: View {
                     ForEach(0..<3) { number in
                         Button {
                             flagTapped(number)
+                
+                            withAnimation {
+                                tappedFlagNumber = number
+                            }
                         } label: {
                             FlagImage(name: countries[number])
+                                .rotation3DEffect(
+                                    .degrees(tappedFlagNumber == number ? 360 : 0),
+                                    axis: (x: 0, y: 1, z: 0)
+                                )
+                                .opacity(isInitialState || tappedFlagNumber == number ? 1.0 : 0.25)
+                                .offset(y: isInitialState || tappedFlagNumber == number ? 0 : 400)
                         }
                     }
                 }
@@ -88,13 +104,13 @@ struct ContentView: View {
         }
     }
     
-    func reset () {
+    func reset() {
         flagsShowedNumber = 0
         score = 0
         askQuestion()
     }
     
-    func flagTapped (_ number: Int) {
+    func flagTapped(_ number: Int) {
         if number == correctAnswer {
             scoreTitle = "Correct!"
             score += 1
@@ -105,7 +121,7 @@ struct ContentView: View {
         showingScore = true
     }
     
-    func askQuestion () {
+    func askQuestion() {
         if flagsShowedNumber == 8 {
             showingGameOver = true
             return
@@ -113,6 +129,12 @@ struct ContentView: View {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
         flagsShowedNumber += 1
+        
+        setInitialState()
+    }
+    
+    func setInitialState() {
+        tappedFlagNumber = -1
     }
 }
 
