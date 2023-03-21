@@ -104,13 +104,13 @@ struct ContentView: View {
         }
     }
     
-    func reset () {
+    func reset() {
         flagsShowedNumber = 0
         score = 0
         askQuestion()
     }
     
-    func flagTapped (_ number: Int) {
+    func flagTapped(_ number: Int) {
         if number == correctAnswer {
             scoreTitle = "Correct!"
             score += 1
@@ -121,7 +121,7 @@ struct ContentView: View {
         showingScore = true
     }
     
-    func askQuestion () {
+    func askQuestion() {
         if flagsShowedNumber == 8 {
             showingGameOver = true
             return
@@ -130,10 +130,10 @@ struct ContentView: View {
         correctAnswer = Int.random(in: 0...2)
         flagsShowedNumber += 1
         
-        setInitialState ()
+        setInitialState()
     }
     
-    func setInitialState () {
+    func setInitialState() {
         tappedFlagNumber = -1
     }
 }
