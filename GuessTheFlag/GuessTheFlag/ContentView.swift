@@ -23,9 +23,10 @@ struct ContentView: View {
     @State private var correctAnswer = Int.random(in: 0...2)
     
     @State private var tappedFlagNumber = -1
-    @State private var degreeToTurn = 0.0
-    @State private var opacityNumber = 1.0
-    @State private var flagDropping = 0.0
+    
+    private var isInitialState: Bool {
+        tappedFlagNumber == -1
+    }
     
     var body: some View {
         ZStack {
@@ -63,18 +64,15 @@ struct ContentView: View {
                 
                             withAnimation {
                                 tappedFlagNumber = number
-                                degreeToTurn += 360
-                                opacityNumber = 0.25
-                                flagDropping = 400
                             }
                         } label: {
                             FlagImage(name: countries[number])
                                 .rotation3DEffect(
-                                    .degrees(tappedFlagNumber == number ? degreeToTurn : 0),
+                                    .degrees(tappedFlagNumber == number ? 360 : 0),
                                     axis: (x: 0, y: 1, z: 0)
                                 )
-                                .opacity(tappedFlagNumber != number ? opacityNumber : 1.0)
-                                .offset(y: tappedFlagNumber != number ? flagDropping : 0)
+                                .opacity(isInitialState || tappedFlagNumber == number ? 1.0 : 0.25)
+                                .offset(y: isInitialState || tappedFlagNumber == number ? 0 : 400)
                         }
                     }
                 }
@@ -132,12 +130,10 @@ struct ContentView: View {
         correctAnswer = Int.random(in: 0...2)
         flagsShowedNumber += 1
         
-        initFlagRendering ()
+        setInitialState ()
     }
     
-    func initFlagRendering () {
-        opacityNumber = 1.0
-        flagDropping = 0.0
+    func setInitialState () {
         tappedFlagNumber = -1
     }
 }
